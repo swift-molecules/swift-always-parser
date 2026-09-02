@@ -4,7 +4,11 @@ public import Parser
 extension Always::Always {
 
     @frozen
-    public struct Parser<Input> {
+    public struct Parser<Input>: Parser::Parser.`Protocol` {
+
+        public typealias Output = Value
+
+        public typealias Failure = Never
 
         public let base: Always::Always<Value>
 
@@ -17,24 +21,15 @@ extension Always::Always {
         public init(_ value: Value) {
             self.base = Always::Always(value)
         }
+
+        @inlinable
+        public borrowing func parse(_ input: inout Input) -> Output {
+            base.value
+        }
     }
 
     @inlinable
     public func parser<Input>() -> Parser<Input> {
         .init(self)
-    }
-}
-
-extension Always::Always.Parser: Parser::Parser.`Protocol` {
-
-    public typealias Output = Value
-
-    public typealias Failure = Never
-
-    public typealias Body = Never
-
-    @inlinable
-    public func parse(_ input: inout Input) -> Output {
-        base.value
     }
 }
